@@ -3,7 +3,8 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useNavigate } from "react-router-dom";
-import { Eye, EyeOff, ChevronDown } from "lucide-react";
+import { ChevronDown } from "lucide-react";
+import { useToast } from "@/components/ui/use-toast";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -21,7 +22,11 @@ import {
 } from "@/components/ui/input-otp";
 
 const phoneSchema = z.object({
-  phone: z.string().min(10, "Phone number must be at least 10 digits"),
+  phone: z
+    .string()
+    .min(10, "Phone number must be 10 digits")
+    .max(10, "Phone number must be 10 digits")
+    .regex(/^07\d{8}$/, "Phone number must start with '07' followed by 8 digits")
 });
 
 type PhoneForm = z.infer<typeof phoneSchema>;
@@ -31,6 +36,7 @@ const Login = () => {
   const [showVerification, setShowVerification] = useState(false);
   const [verificationCode, setVerificationCode] = useState("");
   const navigate = useNavigate();
+  const { toast } = useToast();
 
   const {
     register,
@@ -42,11 +48,19 @@ const Login = () => {
 
   const onSubmitPhone = (data: PhoneForm) => {
     console.log("Phone submitted:", data);
+    toast({
+      title: "Verification code sent",
+      description: "Please check your phone for the verification code",
+    });
     setShowVerification(true);
   };
 
   const onVerificationComplete = () => {
     console.log("Verification code:", verificationCode);
+    toast({
+      title: "Verification successful",
+      description: "Redirecting to dashboard...",
+    });
     navigate("/dashboard");
   };
 
@@ -103,8 +117,8 @@ const Login = () => {
                 <input
                   {...register("phone")}
                   type="tel"
+                  placeholder="Enter your phone number (07xxxxxxxx)"
                   className="w-full px-4 py-3.5 rounded-xl border border-[#E5E5EA] dark:border-gray-600 focus:ring-2 focus:ring-primary focus:border-primary bg-[#FAFAFA] dark:bg-gray-700 dark:text-white"
-                  placeholder="Enter your phone number"
                 />
                 {errors.phone && (
                   <p className="mt-1 text-sm text-[#FF3B30]">{errors.phone.message}</p>
