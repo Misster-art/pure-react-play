@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useNavigate } from "react-router-dom";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, Loader2 } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import {
   DropdownMenu,
@@ -44,6 +44,7 @@ const Login = () => {
   const [selectedOption, setSelectedOption] = useState("");
   const [showVerification, setShowVerification] = useState(false);
   const [verificationCode, setVerificationCode] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -55,13 +56,20 @@ const Login = () => {
     resolver: zodResolver(phoneSchema),
   });
 
-  const onSubmitPhone = (data: PhoneForm) => {
-    console.log("Phone submitted:", data);
-    toast({
-      title: "Verification code sent",
-      description: "Please check your phone for the verification code",
-    });
-    setShowVerification(true);
+  const onSubmitPhone = async (data: PhoneForm) => {
+    setIsLoading(true);
+    try {
+      // Simulate API call with setTimeout
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      console.log("Phone submitted:", data);
+      toast({
+        title: "Verification code sent",
+        description: "Please check your phone for the verification code",
+      });
+      setShowVerification(true);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const onVerificationComplete = () => {
@@ -137,9 +145,17 @@ const Login = () => {
 
             <button
               type="submit"
-              className="w-full flex justify-center py-3.5 px-4 rounded-xl text-sm font-medium text-white bg-primary hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors duration-200"
+              disabled={isLoading}
+              className="w-full flex justify-center items-center py-3.5 px-4 rounded-xl text-sm font-medium text-white bg-primary hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Continue
+              {isLoading ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Sending code...
+                </>
+              ) : (
+                'Continue'
+              )}
             </button>
           </form>
         ) : (
