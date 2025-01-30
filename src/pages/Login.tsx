@@ -24,9 +24,17 @@ import {
 const phoneSchema = z.object({
   phone: z
     .string()
-    .min(10, "Phone number must be 10 digits")
-    .max(10, "Phone number must be 10 digits")
-    .regex(/^07\d{8}$/, "Phone number must start with '07' followed by 8 digits")
+    .refine(
+      (value) => {
+        // Accept format 07XXXXXXXX or +937XXXXXXXX
+        const localFormat = /^07\d{8}$/;
+        const internationalFormat = /^\+937\d{8}$/;
+        return localFormat.test(value) || internationalFormat.test(value);
+      },
+      {
+        message: "Phone number must be in format 07XXXXXXXX or +937XXXXXXXX",
+      }
+    ),
 });
 
 type PhoneForm = z.infer<typeof phoneSchema>;
@@ -117,7 +125,7 @@ const Login = () => {
                 <input
                   {...register("phone")}
                   type="tel"
-                  placeholder="Enter your phone number (07xxxxxxxx)"
+                  placeholder="Enter your phone number (07XXXXXXXX or +937XXXXXXXX)"
                   className="w-full px-4 py-3.5 rounded-xl border border-[#E5E5EA] dark:border-gray-600 focus:ring-2 focus:ring-primary focus:border-primary bg-[#FAFAFA] dark:bg-gray-700 dark:text-white"
                 />
                 {errors.phone && (
