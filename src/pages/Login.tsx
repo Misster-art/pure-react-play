@@ -24,6 +24,7 @@ import {
 const phoneSchema = z.object({
   phone: z
     .string()
+    .transform((val) => val.replace(/\s+/g, '')) // Remove all spaces
     .refine(
       (value) => {
         // Accept format 07XXXXXXXX or +937XXXXXXXX
@@ -125,7 +126,7 @@ const Login = () => {
                 <input
                   {...register("phone")}
                   type="tel"
-                  placeholder="Enter your phone number (07XXXXXXXX or +937XXXXXXXX)"
+                  placeholder="Enter your phone number (077 575 3491 or +937XXXXXXXX)"
                   className="w-full px-4 py-3.5 rounded-xl border border-[#E5E5EA] dark:border-gray-600 focus:ring-2 focus:ring-primary focus:border-primary bg-[#FAFAFA] dark:bg-gray-700 dark:text-white"
                 />
                 {errors.phone && (
