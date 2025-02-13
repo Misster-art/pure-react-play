@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -134,7 +135,7 @@ const Login = () => {
                 <input
                   {...register("phone")}
                   type="tel"
-                  placeholder="Enter your phone number (077 575 3491 or +937XXXXXXXX)"
+                  placeholder="Enter your phone number"
                   className="w-full px-4 py-3.5 rounded-xl border border-[#E5E5EA] dark:border-gray-600 focus:ring-2 focus:ring-primary focus:border-primary bg-[#FAFAFA] dark:bg-gray-700 dark:text-white"
                 />
                 {errors.phone && (
